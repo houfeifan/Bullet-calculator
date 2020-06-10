@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html><head>
+	<meta charset="utf-8">
+	<title>弹幕计算器（双目）</title>
+	<style type="text/css">
+		*{
+			box-sizing: border-box;
+		}
+		#main {
+			text-align: center;
+			height: 520px;
+			width: 400px;
+			margin: auto;
+			padding: 20px;
+			background-color: #80b753;
+			border-radius: 10px;
+			box-shadow: 5px 5px 20px rgba(0,0,0,.7)
+		}
+		#screen {
+			background-color: #fff;
+			width: 345px;
+			margin: 10px auto 50px;
+			box-shadow: 0 0 20px rgba(0,0,0,.35) inset;
+			border-radius: 8px;
+		}
+		#screen li {
+			width: 100%;
+			padding: 5px 18px;
+			line-height: 40px;
+			font-size: 1.5em;
+			text-align: right;
+			list-style: none;
+		}
+		#keyboard button {
+			width: 21%;
+			height: 45px;
+			margin: 7px 3px;
+			box-shadow: 0 0 5px rgba(0,0,0,.5);
+			border-radius: 10px;
+		}
+		.fixed {
+			position: absolute;
+			margin-left: -160px;
+    		margin-top: 15px;
+		}
+		.operators {
+			font-weight: bold;
+			background-color: green;
+			border-color: green;			
+		}
+		.enter {
+			background-color: red;
+			border-color: red;
+		}
+		.reset {
+			background-color: purple;
+			border-color: purple;
+		}
+		#bullets.hide {
+			display: none;
+		}
+
+		.bullet {
+			position:absolute;
+			color:orange;
+			user-select: none;
+		}
+	</style>
+</head><body>
+	<div id="bullets"></div>
+	<div id="main">
+		<ul id="screen">
+			<li id="number1">0</li>
+			<span class="fixed" id="operator">No Operator</span>
+			<li id="number2">0</li>
+			<span class="fixed">＝</span>
+			<li id="result">0</li>
+		</ul>
+		<div id="keyboard">
+			<button onclick="inputNumber(1)">1</button>
+			<button onclick="inputNumber(2)">2</button>
+			<button onclick="inputNumber(3)">3</button>
+			<button class="operators" onclick="inputOperator('+')">＋</button>
+			<br>
+			<button onclick="inputNumber(4)">4</button>
+			<button onclick="inputNumber(5)">5</button>
+			<button onclick="inputNumber(6)">6</button>
+			<button class="operators" onclick="inputOperator('-')">－</button>
+			<br>
+			<button onclick="inputNumber(7)">7</button>
+			<button onclick="inputNumber(8)">8</button>
+			<button onclick="inputNumber(9)">9</button>
+			<button class="operators" onclick="inputOperator('*')">×</button>
+			<br>
+			<button class="reset" onclick="reset()">C</button>
+			<button onclick="inputNumber(0)">0</button>
+			<button class="enter" onclick="calaulate(OPER)">ENTER</button>
+			<button class="operators" onclick="inputOperator('/')">÷</button>
+		</div>
+	</div>
+	<script>
+
+		var NUM1 	= 0;
+		var OPER 	= undefined;
+		var NUM2 	= 0;
+		var RESULT 	= 0;
+
+		var number1	 = document.getElementById('number1');
+		var operator = document.getElementById('operator');
+		var number2  = document.getElementById('number2');
+		var result 	 = document.getElementById('result');
+		var bullets  = document.getElementById('bullets');
+
+
+		function inputNumber (n) {
+
+			if (OPER == undefined) {
+				//输入number1
+				NUM1 = NUM1 * 10 + n;
+				number1.innerHTML = NUM1;
+			} else {
+				//输入number2
+				NUM2 = NUM2 * 10 + n;
+				number2.innerHTML =  NUM2;
+			}
+		}
+
+
+		function inputOperator (x) {
+
+			switch (x) {
+				case '+':
+					OPER = '+';
+					operator.innerHTML = '＋';
+					break;				
+				case '-':
+					OPER = '-';
+					operator.innerHTML = '－';
+					break;
+				case '*':
+					OPER = '*';
+					operator.innerHTML = '×';
+					break;
+				case '/':
+					OPER = '/';
+					operator.innerHTML = '÷';
+					break;
+			}
+		}
+
+
+		function calaulate (OPER) {
+
+			switch (OPER) {
+				case '+':
+					RESULT = NUM1 + NUM2;
+					result.innerHTML = RESULT;
+					bulletGo(RESULT);
+					break;				
+				case '-':
+					RESULT = NUM1 - NUM2;
+					result.innerHTML = RESULT;
+					bulletGo(RESULT);
+					break;
+				case '*':
+					RESULT = NUM1 * NUM2;
+					result.innerHTML = RESULT;
+					bulletGo(RESULT);
+					break;
+				case '/':
+					RESULT = NUM1 / NUM2;
+					result.innerHTML = RESULT;
+					bulletGo(RESULT);
+					break;				
+			}
+		}
+
+
+		function reset () {
+
+			removeTag();
+			NUM1 	= 0;
+			OPER 	= undefined;
+			NUM2 	= 0;
+			RESULT 	= 0;
+
+			number1.innerHTML	= NUM1;
+			operator.innerHTML	= 'No Operator';
+			number2.innerHTML	= NUM2;
+			result.innerHTML	= RESULT;
+		}
+/**********************************************************************************
+
+            	        注释以下函数关闭弹幕功能 		:)	
+
+***********************************************************************************/
+		function creatTag (RESULT) {
+		//生成单个弹幕标签。RESULT参数用于判断计算结果正负，调整弹幕方向。
+
+			var bullet       = document.createElement("marquee");
+			var scrollSpeed  = Math.floor(Math.random() *60 + 8);	//弹幕流动速度
+			var fontSize     = Math.floor(Math.random() *60 + 10);	//弹幕字体大小
+			var bulletArea   = Math.floor(Math.random() *160);		//弹幕显示区域
+
+			bullet.innerHTML = RESULT;
+			bullet.setAttribute("class", "bullet");
+			bullet.setAttribute("scrollamount", scrollSpeed);
+			bullet.setAttribute("loop", "1");
+			bullet.setAttribute("style", "font-size:" + fontSize + "px;margin-top:" + bulletArea + "px;");
+
+			if (RESULT >= 0) {
+				bullet.setAttribute("direction", "left");
+			} else {
+				bullet.setAttribute("direction", "right");
+			}
+
+			bullets.appendChild(bullet);
+		}
+
+
+		function bulletGo (RESULT) {
+		//生成 “RESULT” 数量个弹幕标签
+
+			for (var i = 1; i <= Math.abs(RESULT); i ++) {
+				creatTag(RESULT);
+
+				if (i > 500) break;
+			}
+		}
+
+
+		function removeTag () {
+		//移除所有弹幕标签
+
+			bullets.innerHTML = "";
+		}
+
+	</script></body>
+</html>
